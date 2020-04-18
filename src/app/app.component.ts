@@ -20,6 +20,10 @@ type Logo = 'fish' | 'dog' | 'bird' | 'cow';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  demo = {
+    zip: [],
+    combineLatest: []
+  };
   /* 2. Create the two persons - color and logo observables.
         They will communicate with us later (when we subscribe) */
   private color$ = new Subject<Color>();
@@ -46,7 +50,76 @@ export class AppComponent implements OnInit {
     7. Ms. Color picks BLUE <- waiting for love...
     */
     zip(this.color$, this.logo$).subscribe(([color, logo]) => {
-      console.log('Zip => ', `${color} shirt with ${logo}`);
+      console.log('zip => ', `${color} shirt with ${logo}`);
+      this.demo.zip = [...this.demo.zip, { color, logo }];
+    });
+
+    /* 3.2 combineLatest - the go dutch operator
+    combineLatest is the go dutch operator - once they meet their mates one time,
+    they will wait for no man. In our case, first function is triggered after
+    both color and logo values change. There onwards, either color or logo value
+    changed will trigger the log.
+    */
+    combineLatest(this.color$, this.logo$).subscribe(([color, logo]) => {
+      console.log('combineLatest => ', `${color} shirt with ${logo}`);
+      this.demo.combineLatest = [...this.demo.combineLatest, { color, logo }]
+    });
+
+    /* 3.3 withLatestFrom - the master slave operator
+    withLatestFrom operator the master slave operator. At first, master must meet the
+    slave. After that, the master will take the lead, giving command. The slave will
+    just follow and has no voice. :(
+    Can you guess who is the master and who is the slave in our case?
+
+    You guessed it! color is the master while logo is the slave. At first
+    (only once), color(master) will look for logo(slave). Once the logo(slave)
+    has responded, color(master) will take the lead. Log will get triggered
+    whenever the next color(master) value is changed. The logo(slave) value
+    changes will not trigger the console log.
+
+      1. Ms. Color picks WHITE <- nothing happen, waiting for slave
+      2. Mr. Logo picks FISH <- slave found, wait for the master's command
+      3. Ms. Color picks GREEN <- log 01, master says GREEN! So, GREEN + FISH
+      4. Mr. Logo picks DOG
+      5. Ms. Color picks RED <- log 02, master says RED! So, RED + DOG
+      6. Mr. Logo picks BIRD
+      7. Ms. Color picks BLUE <- log 03 master says BLUE! So, BLUE + BIRD
+    */
+    this.color$.pipe(withLatestFrom(this.logo$))
+      .subscribe(([color, logo]) => {
+        console.log('withLatestFrom => ', `${color} shirt with ${logo}`);
+      });
+
+    /* 3.4 forkJoin - the final destination operator
+    I call forkJoin operator the final destination operator because they
+    are very serious, they only commit once all parties are very sure that they
+    are completely true, final destination of each other.
+    1. Ms. Color picks WHITE
+    2. Mr. Logo picks FISH
+    3. Ms. Color picks GREEN
+    4. Mr. Logo picks DOG
+    5. Ms. Color picks RED
+    6. Mr. Logo picks BIRD
+    7. Ms. Color picks BLUE
+    8. Ms. Color completed <-- color is serious!
+    9. Mr. Logo completed <--- log no 01, both logo & color are completed. Final destination!
+
+     */
+    forkJoin(this.color$, this.logo$).subscribe(([color, logo]) => {
+      console.log('forkJoin => ', `${color} shirt with ${logo}`);
+    });
+
+    /* 3.5 Let's say, you only want to make 1 shirt, you only need to know the first color
+    and logo, In this case, you don't care about the rest of the info that Ms. Color &
+    Mr. Logo provide. You can make use of take or first operator to achieve auto complete
+    observable once first color and logo emit. 
+    */
+
+    const firstColor$ = this.color$.pipe(take(1));
+    const firstLogo$ = this.logo$.pipe(first());
+
+    forkJoin(firstColor$, firstLogo$).subscribe(([color, logo]) => {
+      console.log('take(1), first() => ', `${color} shirt with ${logo}`);
     });
 
     /* 4. The two persons(observables) are doing their job, picking color and logo
@@ -63,7 +136,7 @@ export class AppComponent implements OnInit {
     this.color$.next('blue');
 
     /* 5. When the two persons(observables) has no more info, they say bye, bye
-      We will write the codes here later. */
+    */
     this.color$.complete();
     this.logo$.complete();
   }
