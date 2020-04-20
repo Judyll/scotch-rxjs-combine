@@ -24,6 +24,10 @@ export class AppComponent implements OnInit {
     zip: [],
     combineLatest: []
   };
+
+  get list() {
+    return Object.keys(this.demo);
+  }
   /* 2. Create the two persons - color and logo observables.
         They will communicate with us later (when we subscribe) */
   private color$ = new Subject<Color>();

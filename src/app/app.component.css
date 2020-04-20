@@ -1,0 +1,62 @@
+ul {
+    list-style: none;
+    padding: none;
+    display: flex;
+}
+
+li {
+    /* t-shirt container */
+    padding: 4px;
+    position: relative;
+}
+
+img {
+    /* t-shirt */
+    width: 76px;
+}
+
+.logo {
+/* logo */
+    position: absolute;
+    float: left;
+    top: 2px;
+    left: 0px;
+    width: 38px;
+    height: 38px;
+    padding: 22px;
+    background-size: 30px 30px !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+}
+
+.fish {
+    background: url(https://cdn.scotch.io/272/qb4W7TSNSzqfQTEH6S3j_fish.png);
+}
+
+.dog {
+    background: url(https://cdn.scotch.io/272/EzOQmrJlSUKJ8HJXI3ly_dog.png);
+}
+  
+.bird {
+    background: url(https://cdn.scotch.io/272/9KDFzos3TSOTlgzThfHS_bird.png);
+}
+  
+.cow {
+    background: url(https://cdn.scotch.io/272/ipLAoTBQruKMtRVqYcgl_cow.png);
+}
+
+.red {
+    background: #ff5c5c;
+}
+
+.white {
+    background: #fff;
+}
+  
+.green {
+    background: #35b729;
+}
+  
+  .blue {
+    background: #2eb2ff;
+}
